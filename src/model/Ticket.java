@@ -1,3 +1,6 @@
+/* This class represents a Ticket object. It creates its parameters 
+in the constructor and has getters and setters for each of its parameters. */
+
 package model;
 
 public class Ticket {
@@ -33,6 +36,14 @@ public class Ticket {
 
     public TicketStatus getTicketStatus() {
         return ticketStatus;
+    }
+
+    public void setPriority(TicketPriority ticketPriority) {
+        this.ticketPriority = ticketPriority;
+    }
+
+    public void setStatus(TicketStatus ticketStatus) {
+        this.ticketStatus = ticketStatus;
     }
 
     @Override
