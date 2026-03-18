@@ -1,5 +1,8 @@
-// This enum represents the status of a Ticket. It has four values: OPEN, IN_PROGRESS, RESOLVED, and CLOSED.
-
+/*
+ * This enum represents the different stages in the lifecycle of a ticket.
+ * A ticket is typically created with an OPEN status and then progresses
+ * through different states such as IN_PROGRESS or RESOLVED.
+ */
 package model;
 
 public enum TicketStatus {

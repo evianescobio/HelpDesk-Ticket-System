@@ -1,5 +1,8 @@
-/* This class represents a Ticket object. It creates its parameters 
-in the constructor and has getters and setters for each of its parameters. */
+/* 
+ * This class represents a single ticket in the system. It contains all the
+ * necessary information about a ticket, such as its ID, requester name,
+ * description, priority, and status.
+ */
 
 package model;
 
