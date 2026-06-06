@@ -1,14 +1,18 @@
-/* This class is responsible for handling all the client requests. There are two types of access: Client access and Technician access.
-    They will handle different requests. Clients can only create tickets, check ticket status, and get tickets by client name. 
-    Technicians can get  all tickets, get next ticket, update ticket status, update ticket priority, and resolve ticket.
-*/
+/*
+ * This class contains the core logic of the help desk system.
+ * It acts as the middle layer between the user interface and the repository,
+ * handling all operations related to ticket creation, retrieval, and updates.
+ * 
+ * The service separates client and technician responsibilities, ensuring that
+ * each type of user can only perform the appropriate actions. It also controls
+ * how tickets are created and modified, keeping the system behavior consistent.
+ */
 
 package service;
 
 import model.Ticket;
 import model.TicketStatus;
 import model.TicketPriority;
-import repository.InMemoryTicketRepository;
 import repository.TicketRepository;
 
 import java.util.ArrayList;
