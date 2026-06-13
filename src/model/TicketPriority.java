@@ -12,6 +12,7 @@ public enum TicketPriority {
     HIGH(3),
     CRITICAL(4);
 
+    // Using enum so ticket priority has a fixed group of values.
     private final int priority;
 
     TicketPriority(int priority) {

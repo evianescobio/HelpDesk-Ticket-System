@@ -17,7 +17,7 @@ public interface TicketRepository {
 
     Ticket findTicketById(int ticketId);
 
-    Ticket getNextTicket();
+    Ticket claimNextTicket();
 
     List<Ticket> getAllTickets();
 

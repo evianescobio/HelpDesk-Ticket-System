@@ -30,7 +30,7 @@ public class InMemoryTicketRepository implements TicketRepository {
         return ticketMap.get(ticketId);
     }
 
-    public Ticket getNextTicket() {
+    public Ticket claimNextTicket() {
         return priority.poll();
     }
 

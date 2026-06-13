@@ -6,8 +6,19 @@
 package model;
 
 public enum TicketStatus {
-        OPEN,
-        IN_PROGRESS,
-        RESOLVED,
-        CLOSED,
+        OPEN(1),
+        IN_PROGRESS(2),
+        RESOLVED(3),
+        CLOSED(4);
+
+        // Using enum so ticket status has a fixed group of values.
+        private final int status;
+
+        TicketStatus(int status) {
+                this.status = status;
+        }
+        
+        public int getStatus() {
+                return status;
+        }
 }
