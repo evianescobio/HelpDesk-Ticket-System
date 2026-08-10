@@ -3,15 +3,18 @@
  * necessary information about a ticket, such as its ID, requester name,
  * description, priority, and status.
  */
-
 package model;
 
+import java.time.LocalDateTime;
+
+
 public class Ticket {
-    private int ticketId;
-    private String requesterName;
+    private final int ticketId;
+    private final String requesterName;
     private String ticketDescription;
     private TicketPriority ticketPriority;
     private TicketStatus ticketStatus;
+    private final LocalDateTime createdAt;
     
     public Ticket(int ticketId, String requesterName, String ticketDescription, TicketPriority ticketPriority, TicketStatus ticketStatus) {
         this.ticketId = ticketId;
@@ -19,6 +22,7 @@ public class Ticket {
         this.ticketDescription = ticketDescription;
         this.ticketPriority = ticketPriority;
         this.ticketStatus = ticketStatus;
+        this.createdAt = LocalDateTime.now();
     }
 
     public int getTicketId() {
@@ -41,6 +45,10 @@ public class Ticket {
         return ticketStatus;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     public void setPriority(TicketPriority ticketPriority) {
         this.ticketPriority = ticketPriority;
     }
@@ -51,7 +59,8 @@ public class Ticket {
 
     @Override
     public String toString() {
-        return ticketId + ": " + requesterName + " || " + ticketDescription + " || Priority: " + ticketPriority + " || Status: " + ticketStatus;
+        return ticketId + ": " + requesterName + " || " + 
+        ticketDescription + " || Priority: " + ticketPriority + " || Status: " + ticketStatus + " || Created At: " + createdAt;
     }
     
 }

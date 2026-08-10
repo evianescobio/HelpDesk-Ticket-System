@@ -7,19 +7,17 @@
 package model;
 
 public enum TicketPriority {
-    LOW(1),
-    MEDIUM(2),
-    HIGH(3),
-    CRITICAL(4);
+    REGULAR(1),
+    HIGH(2);
 
     // Using enum so ticket priority has a fixed group of values.
-    private final int priority;
+    private final int level;
 
-    TicketPriority(int priority) {
-        this.priority = priority;
+    TicketPriority(int level) {
+        this.level = level;
     }
 
-    public int getPriority() {
-        return priority;
+    public int getLevel() {
+        return level;
     }
 }

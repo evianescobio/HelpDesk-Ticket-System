@@ -14,13 +14,14 @@ import model.Ticket;
 import model.TicketStatus;
 import model.TicketPriority;
 import repository.TicketRepository;
+import java.util.Comparator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SupportDeskService {
 
-    private TicketRepository ticketRepository;
+    private final TicketRepository ticketRepository;
     private int nextTicketId = 1;
 
     // Constructor
@@ -36,21 +37,12 @@ public class SupportDeskService {
         int id = nextTicketId++;
 
         TicketStatus status = TicketStatus.OPEN;
-        TicketPriority priority = TicketPriority.MEDIUM;
+        TicketPriority priority = TicketPriority.REGULAR;
 
         Ticket ticket = new Ticket(id, name, description, priority, status);
         ticketRepository.saveTicket(ticket);
 
         return ticket;
-    }
-
-    // Get ticket status
-    public TicketStatus checkTicketStatus(int ticketId) {
-        Ticket ticket = ticketRepository.findTicketById(ticketId);
-        if (ticket != null) {
-            return ticket.getTicketStatus();
-        }
-        return null;
     }
 
     // Get tickets by client name
@@ -66,6 +58,9 @@ public class SupportDeskService {
         return result;
     }
 
+
+
+
     /* ------------ Technician Methods ------------ */
 
     // Get all tickets.
@@ -73,12 +68,30 @@ public class SupportDeskService {
         return ticketRepository.getAllTickets();
     }
 
-    // Get next ticket (from priority queue).
-    public Ticket getNextTicket() {
-        if (ticketRepository.getAllTickets().isEmpty()) {
-            return null;
+    // Get tickets that are pending for technician.
+    public List<Ticket> getPendingTicketsForTechnician() {
+        List<Ticket> tickets = ticketRepository.getAllTickets();
+        List<Ticket> result = new ArrayList<>();
+
+        for (Ticket ticket : tickets) {
+            if (ticket.getTicketStatus() == TicketStatus.OPEN || ticket.getTicketStatus() == TicketStatus.IN_PROGRESS) {
+                result.add(ticket);
+            }
         }
-        return ticketRepository.getNextTicket();
+
+        result.sort(
+            Comparator
+                .comparingInt((Ticket ticket) -> ticket.getTicketPriority().getLevel())
+                .reversed()
+                .thenComparing(Ticket::getCreatedAt)
+        );
+
+        return result;
+    }
+
+    // Get tickets by ticket ID
+    public Ticket getTicketsByTicketId(int ticketId) {
+        return ticketRepository.findTicketById(ticketId);
     }
 
     // Update ticket status.
