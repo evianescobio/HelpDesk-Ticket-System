@@ -9,7 +9,7 @@ package ui;
 public class MenuPrinter {
 
     public static void printMainMenu() {
-        System.out.println("========== MAIN MENU ==========");
+        System.out.println("\n\n========== MAIN MENU ==========");
         System.out.println("1. Log in as a client.");
         System.out.println("2. Log in as technician.");
         System.out.println("0. Exit.");
@@ -17,7 +17,7 @@ public class MenuPrinter {
 
     
     public static void printClientMenu() {
-        System.out.println("========== CLIENT MENU ==========");
+        System.out.println("\n\n========== CLIENT MENU ==========");
         System.out.println("1. Create a new ticket.");
         System.out.println("2. View my tickets.");
         System.out.println("0. Exit.");
@@ -25,7 +25,7 @@ public class MenuPrinter {
 
 
     public static void printTechnicianMenu() {
-        System.out.println("========== TECHNICIAN MENU ==========");
+        System.out.println("\n\n========== TECHNICIAN MENU ==========");
         System.out.println("1. View all tickets.");
         System.out.println("2. View pending tickets.");
         System.out.println("3. Search ticket by ID.");
