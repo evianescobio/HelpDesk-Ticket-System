@@ -1,11 +1,20 @@
 # Compiled Java files
 *.class
 
-# Logs
-*.log
+# Build folders
+bin/
+out/
+target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
 
 # VS Code settings
 .vscode/
+
+# Logs
+*.log
 
 # OS files
 .DS_Store
