@@ -1,47 +1,73 @@
-# Help Desk Ticket System
+# 🎫 Help Desk Ticket System
 
-A Java console application that simulates a technical support help desk.
-This project is being developed as a personal practice project focused on object-oriented programming, data structures, and console-based application design.
+A Java application that simulates a technical support help desk.
 
+The project started as a console application to practice Java, object-oriented programming, data structures, and application design. It is now being expanded into a desktop application using **JavaFX**.
 
-## Current Status
-🚧 Work in progress
+## 🚧 Current Status
 
-The project currently includes the basic structure for models, repositories, and services, utilities, and console menus. The main application is being built step by step.
+The core console application is functional, and development of the JavaFX interface has begun.
 
-## Current Features
-- Ticket model with ID, requester name, description, priority, status, and creation timestamp
-- Ticket priority levels using an enum
-- Ticket status tracking using an enum
-- In-memory ticket storage using a HashMap
-- Service layer for ticket creation, lookup, updates, and technician workflows
-- Menu printer for client and technician console menus
-- Input validation helper methods
-- Main application setup started
+The project now uses **Maven** for dependency management and builds successfully with JavaFX.
 
+## ✨ Features
 
-## Planned Features
-- Client menu workflow
-  - Create a new ticket
-  - View tickets created by the current client
+- Create and manage support tickets
+- Automatic ticket IDs and creation timestamps
+- Ticket priority and status tracking
+- Search tickets by ID
+- Update ticket status and priority
+- View pending and completed tickets
+- Client and technician workflows
+- In-memory storage using `HashMap`
+- Ticket organization by priority and creation time
+- Input validation
 
-- Technician menu workflow
-  - View pending tickets
-  - View all tickets
-  - Search ticket by ID
-  - Update ticket status
-  - Update ticket priority
-  - Resolve tickets
+## 🏗️ Project Structure
 
-- Priority-based ticket sorting
-  - High-priority tickets shown first
-  - Older tickets shown before newer tickets when priority is the same
+```text
+src/
+├── app/
+├── model/
+├── repository/
+├── service/
+├── ui/
+└── utils/
+```
 
-- Stack-based undo functionality for selected technician actions
+The project follows a layered structure that separates models, data storage, business logic, user interface, and utility methods.
 
-- Improved console formatting and user experience
+## 🖥️ JavaFX Progress
 
+The project is currently transitioning from a console interface to a graphical desktop application.
 
-## My Goal
+Completed so far:
 
-My goal is to grow this console-based application into a runnable desktop application using JavaFX. I also plan to add a database layer so tickets and system data can be stored persistently and accessed by the application.
+- Maven project configuration
+- JavaFX dependencies and plugin setup
+- Successful Maven compilation
+- Initial JavaFX application class
+- First JavaFX window successfully launched
+
+## 🛠️ Technologies
+
+- Java
+- JavaFX
+- Maven
+- Git & GitHub
+- Java Collections
+- Object-Oriented Programming
+
+## 🗺️ Roadmap
+
+- Complete the JavaFX client and technician interfaces
+- Add ticket creation and management screens
+- Add persistent SQL database storage
+- Add user authentication and technician accounts
+- Add ticket history and technician notes
+
+Long term, the project may evolve into a full-stack web application using **Spring Boot**, **REST APIs**, and **React**.
+
+## 🎯 Project Goal
+
+This is a long-term learning project built to strengthen my Java and software engineering skills while applying new concepts such as GUI development, databases, APIs, and backend development.
