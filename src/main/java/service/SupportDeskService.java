@@ -83,7 +83,7 @@ public class SupportDeskService {
             Comparator
                 .comparingInt((Ticket ticket) -> ticket.getTicketPriority().getLevel())
                 .reversed()
-                .thenComparing(Ticket::getCreatedAt)
+                .thenComparing(Ticket::getDateCreated)
         );
 
         return result;

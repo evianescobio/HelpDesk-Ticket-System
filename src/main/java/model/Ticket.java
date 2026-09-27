@@ -15,8 +15,8 @@ public class Ticket {
     private String ticketDescription;
     private TicketPriority ticketPriority;
     private TicketStatus ticketStatus;
-    private final LocalDateTime createdAt;
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a");
+    private final LocalDateTime dateCreated;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d-MMM-yyyy h:mm a");
     
     public Ticket(int ticketId, String requesterName, String ticketDescription, TicketPriority ticketPriority, TicketStatus ticketStatus) {
         this.ticketId = ticketId;
@@ -24,7 +24,7 @@ public class Ticket {
         this.ticketDescription = ticketDescription;
         this.ticketPriority = ticketPriority;
         this.ticketStatus = ticketStatus;
-        this.createdAt = LocalDateTime.now();
+        this.dateCreated = LocalDateTime.now();
     }
 
     public int getTicketId() {
@@ -47,8 +47,8 @@ public class Ticket {
         return ticketStatus;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
     }
 
     public void setPriority(TicketPriority ticketPriority) {
@@ -62,7 +62,7 @@ public class Ticket {
     @Override
     public String toString() {
         return ticketId + ": " + requesterName + " || " + 
-        ticketDescription + " || Priority: " + ticketPriority + " || Status: " + ticketStatus + " || Created At: " + createdAt.format(DATE_FORMATTER);
+        ticketDescription + " || Priority: " + ticketPriority + " || Status: " + ticketStatus + " || Date Created: " + dateCreated.format(DATE_FORMATTER);
     }
     
 }
