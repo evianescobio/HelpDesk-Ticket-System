@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.ComboBox;
 
 import model.Ticket;
 import model.TicketPriority;
@@ -72,7 +73,6 @@ public class EvAnaApp extends Application {
         dateCreatedColumn.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
         // Formatting for the Date Created Column.
         dateCreatedColumn.setCellFactory(column -> new javafx.scene.control.TableCell<>() { 
-            
             @Override
             protected void updateItem(LocalDateTime dateTime, boolean empty) {
                 super.updateItem(dateTime, empty);
@@ -85,6 +85,39 @@ public class EvAnaApp extends Application {
                 }
             }
         });
+
+        // Dropdowns to set up Priority and Status.
+        Label priorityLabel = new Label("Priority");
+        ComboBox<TicketPriority> priorityComboBox = new ComboBox<>();
+        priorityComboBox.getItems().addAll(TicketPriority.values());
+        priorityComboBox.setValue(TicketPriority.REGULAR);
+
+        Label statusLabel = new Label("Status");
+        ComboBox<TicketStatus> statusComboBox = new ComboBox<>();
+        statusComboBox.getItems().addAll(TicketStatus.values());
+        statusComboBox.setValue(TicketStatus.OPEN);
+
+        // Event-handler to manage the priority and status of the selected tickets.
+        Button updateTicketButton = new Button("Update Ticket");
+        updateTicketButton.setOnAction(event -> {
+            Ticket selectedTicket = ticketTable.getSelectionModel().getSelectedItem();
+
+            if (selectedTicket == null) {
+                messageLabel.setText("Please select a ticket");
+                return;
+            }
+
+            TicketPriority selectedPriority = priorityComboBox.getValue();
+            TicketStatus selectedStatus = statusComboBox.getValue();
+
+            supportDeskService.updateTicketPriority(selectedTicket.getTicketId(), selectedPriority);
+            supportDeskService.updateTicketStatus(selectedTicket.getTicketId(), selectedStatus);
+
+            ticketTable.refresh();
+
+            messageLabel.setText("Ticket #" + selectedTicket.getTicketId() + " has been successfully updated");
+        });
+
 
         // Adds all the columns to the table.
         ticketTable.getColumns().addAll(
@@ -135,7 +168,12 @@ public class EvAnaApp extends Application {
             createTicketButton,
             messageLabel,
             ticketsLabel,
-            ticketTable
+            ticketTable,
+            priorityLabel,
+            priorityComboBox,
+            statusLabel,
+            statusComboBox,
+            updateTicketButton
         );
         root.setPadding(new Insets(20));
 
