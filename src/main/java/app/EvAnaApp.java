@@ -50,6 +50,7 @@ public class EvAnaApp extends Application {
         descriptionArea.setPromptText("Describe the problem you are experiencing");
 
 
+
         // === TICKET TABLE PROPERTIES ===
         Label ticketsLabel = new Label("Tickets");
         TableView<Ticket> ticketTable = new TableView<>();
@@ -155,6 +156,41 @@ public class EvAnaApp extends Application {
             ticketTable.getItems().setAll(supportDeskService.getAllTickets());
         });
 
+
+        // == SEARCH FEATURE ==
+        Label searchLabel = new Label("Search Tickets by ID");
+        TextField searchField = new TextField();
+        searchField.setPromptText("Enter Ticket ID");
+
+        Button searchButton = new Button("Search");
+
+        searchButton.setOnAction(event -> {
+            String input = searchField.getText().trim();
+
+            if(input.isBlank()) {
+                messageLabel.setText("Please enter a ticket ID.");
+                return;
+            }
+
+            try {
+                int ticketId = Integer.parseInt(input);
+                Ticket ticket = supportDeskService.getTicketsByTicketId(ticketId);
+
+                if (ticket == null) {
+                    messageLabel.setText("Ticket #" + ticketId + " was not found.");
+                    return;
+                }
+
+                ticketTable.getSelectionModel().select(ticket);
+                ticketTable.scrollTo(ticket);
+                messageLabel.setText("Ticket #" + ticketId + " was found.");
+            }
+            catch (NumberFormatException exception) {
+                messageLabel.setText("Please enter a valid ticked ID.");
+            }
+        });
+
+
         
         
         // === ROOT LAYOUT ===
@@ -173,7 +209,10 @@ public class EvAnaApp extends Application {
             priorityComboBox,
             statusLabel,
             statusComboBox,
-            updateTicketButton
+            updateTicketButton,
+            searchLabel,
+            searchField,
+            searchButton
         );
         root.setPadding(new Insets(20));
 
