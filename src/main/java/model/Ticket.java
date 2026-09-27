@@ -6,6 +6,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class Ticket {
@@ -15,6 +16,7 @@ public class Ticket {
     private TicketPriority ticketPriority;
     private TicketStatus ticketStatus;
     private final LocalDateTime createdAt;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a");
     
     public Ticket(int ticketId, String requesterName, String ticketDescription, TicketPriority ticketPriority, TicketStatus ticketStatus) {
         this.ticketId = ticketId;
@@ -60,7 +62,7 @@ public class Ticket {
     @Override
     public String toString() {
         return ticketId + ": " + requesterName + " || " + 
-        ticketDescription + " || Priority: " + ticketPriority + " || Status: " + ticketStatus + " || Created At: " + createdAt;
+        ticketDescription + " || Priority: " + ticketPriority + " || Status: " + ticketStatus + " || Created At: " + createdAt.format(DATE_FORMATTER);
     }
     
 }

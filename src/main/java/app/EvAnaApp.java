@@ -41,7 +41,10 @@ public class EvAnaApp extends Application {
         descriptionArea.setPrefRowCount(4);
         descriptionArea.setPromptText("Describe the problem you are experiencing");
 
-
+        // === TICKET LIST ===
+        Label ticketsLabel = new Label("Tickets");
+        ListView<Ticket> ticketListView = new ListView<>();
+        
         // === CREATE TICKET BUTTON ===
         Button createTicketButton = new Button("Create Ticket");
         createTicketButton.setOnAction(event -> {
@@ -61,12 +64,10 @@ public class EvAnaApp extends Application {
             
             Ticket ticket = supportDeskService.createTicket(name, description);
             messageLabel.setText("Ticket # " + ticket.getTicketId() + " created successfully.");
+            ticketListView.getItems().setAll(supportDeskService.getAllTickets());
         });
 
-        // === TICKET LIST ===
-        Label ticketsLabel = new Label("Tickets");
-        ListView<Ticket> ticketListView = new ListView<>();
-        ticketListView.getItems().setAll(supportDeskService.getAllTickets());
+        
         
         // === ROOT LAYOUT ===
         VBox root = new VBox(
