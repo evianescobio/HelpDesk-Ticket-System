@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
@@ -191,33 +193,55 @@ public class EvAnaApp extends Application {
         });
 
 
-        
-        
-        // === ROOT LAYOUT ===
-        VBox root = new VBox(
+
+        // === HORIZONTAL LAYOUT ===
+        HBox searchBar = new HBox(
             10,
-            titleLabel,
+            searchLabel,
+            searchField,
+            searchButton
+        );
+
+        HBox updateBar = new HBox(
+            10,
+            priorityLabel,
+            priorityComboBox,
+            statusLabel,
+            statusComboBox,
+            updateTicketButton
+        );
+
+        HBox header = new HBox(titleLabel);
+        header.setPadding(new Insets(15));
+        
+        
+        // === VERTICAL LAYOUT ===
+        VBox mainContent = new VBox(
+            10,
             nameLabel,
             nameField,
             descriptionLabel,
             descriptionArea,
             createTicketButton,
             messageLabel,
+            searchBar,
             ticketsLabel,
             ticketTable,
-            priorityLabel,
-            priorityComboBox,
-            statusLabel,
-            statusComboBox,
-            updateTicketButton,
-            searchLabel,
-            searchField,
-            searchButton
+            updateBar
         );
-        root.setPadding(new Insets(20));
 
-        Scene scene = new Scene(root, 600, 400);
         
+        
+        // === SET PADDING AND SCENE ===
+        mainContent.setPadding(new Insets(20));
+
+        // === BORDER LAYOUT ===
+        BorderPane root = new BorderPane();
+        root.setTop(header);
+        root.setCenter(mainContent);
+
+        // === SCENE ===
+        Scene scene = new Scene(root, 600, 400);
         stage.setScene(scene);
         stage.setTitle("EvAna Help Desk");
         stage.show();
