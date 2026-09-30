@@ -15,6 +15,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.Priority;
 
 import model.Ticket;
 import model.TicketPriority;
@@ -201,6 +202,9 @@ public class EvAnaApp extends Application {
             searchField,
             searchButton
         );
+        // Makes the search bar fill the available space.
+        HBox.setHgrow(searchField, Priority.ALWAYS);
+        searchField.setMaxWidth(Double.MAX_VALUE);
 
         HBox updateBar = new HBox(
             10,
@@ -229,6 +233,9 @@ public class EvAnaApp extends Application {
             ticketTable,
             updateBar
         );
+
+        // Makes the ticket table fill the available space.
+        VBox.setVgrow(ticketTable, Priority.ALWAYS);
 
         
         
