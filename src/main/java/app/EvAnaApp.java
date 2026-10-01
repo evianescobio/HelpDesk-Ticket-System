@@ -6,14 +6,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.Priority;
 
@@ -24,35 +20,22 @@ import repository.InMemoryTicketRepository;
 import repository.TicketRepository;
 import service.SupportDeskService;
 import ui.components.TicketTableView;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import ui.components.CreateTicketView;
 
 public class EvAnaApp extends Application {
 
     @Override
     public void start(Stage stage) {
         
+        CreateTicketView createTicketView = new CreateTicketView();
         TicketRepository ticketRepository = new InMemoryTicketRepository();
         SupportDeskService supportDeskService = new SupportDeskService(ticketRepository);
 
         // Title of the application.
         Label titleLabel = new Label("EvAna Help Desk");
-        
 
-        // === TICKET FORM ===
-        // Name of the requester. Create a text field for the requester's name.
-        Label nameLabel = new Label("Requester Name");
+        // === APPLICATION MESSAGES ===
         Label messageLabel = new Label();
-        TextField nameField = new TextField();
-        nameField.setPromptText("Enter Your Name");
-
-        // Description of the problem. Create a text area for the problem description.
-        Label descriptionLabel = new Label("Problem Description");
-        TextArea descriptionArea = new TextArea();
-        descriptionArea.setPrefRowCount(4);
-        descriptionArea.setPromptText("Describe the problem you are experiencing");
-
 
 
         // === TICKET TABLE PROPERTIES ===
@@ -95,12 +78,10 @@ public class EvAnaApp extends Application {
 
         
         // === CREATE TICKET BUTTON ===
-        Button createTicketButton = new Button("Create Ticket");
-        createTicketButton.setOnAction(event -> {
-            
-            // Get the values from the form fields.
-            String name = nameField.getText().trim();
-            String description = descriptionArea.getText().trim();
+        createTicketView.getCreateTicketButton().setOnAction(event -> {
+
+            String name = createTicketView.getRequesterName();
+            String description = createTicketView.getDescription();
 
             if (name.isBlank()) {
                 messageLabel.setText("Please enter your name.");
@@ -116,7 +97,9 @@ public class EvAnaApp extends Application {
             messageLabel.setText("Ticket # " + ticket.getTicketId() + " created successfully.");
             ticketTableView.displayTickets(supportDeskService.getAllTickets());
             
+            createTicketView.clearFields();
         });
+
 
 
         // == SEARCH FEATURE ==
@@ -180,11 +163,7 @@ public class EvAnaApp extends Application {
         // === VERTICAL LAYOUT ===
         VBox mainContent = new VBox(
             10,
-            nameLabel,
-            nameField,
-            descriptionLabel,
-            descriptionArea,
-            createTicketButton,
+            createTicketView.getRoot(),
             messageLabel,
             searchBar,
             ticketTableLabel,
