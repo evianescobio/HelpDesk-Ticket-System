@@ -34,7 +34,7 @@
                 <version>0.0.8</version>
 
                 <configuration>
-                    <mainClass>app.EvAnaApp</mainClass>
+                    <mainClass>app.EvanaApp</mainClass>
                 </configuration>
             </plugin>
 
