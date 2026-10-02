@@ -3,81 +3,54 @@ package app;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import javafx.scene.control.ComboBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import model.Ticket;
 import model.TicketPriority;
 import model.TicketStatus;
+
 import repository.InMemoryTicketRepository;
 import repository.TicketRepository;
+
 import service.SupportDeskService;
-import ui.components.TicketTableView;
+
 import ui.components.CreateTicketView;
+import ui.components.TicketSearchView;
+import ui.components.TicketTableView;
+import ui.components.TicketUpdateView;
 
 public class EvAnaApp extends Application {
 
     @Override
     public void start(Stage stage) {
         
-        CreateTicketView createTicketView = new CreateTicketView();
+        // === APPLICATION DEPENCIES ===
         TicketRepository ticketRepository = new InMemoryTicketRepository();
         SupportDeskService supportDeskService = new SupportDeskService(ticketRepository);
 
-        // Title of the application.
-        Label titleLabel = new Label("EvAna Help Desk");
-
-        // === APPLICATION MESSAGES ===
-        Label messageLabel = new Label();
-
-
-        // === TICKET TABLE PROPERTIES ===
-        Label ticketTableLabel = new Label("Tickets");
+        // === UI COMPONENTS ===
+        CreateTicketView createTicketView = new CreateTicketView();
+        TicketSearchView ticketSearchView = new TicketSearchView();
         TicketTableView ticketTableView = new TicketTableView();
-
-        // == TICKET UPDATE PROPERTIES ==
-        Label priorityLabel = new Label("Priority");
-
-        ComboBox<TicketPriority> priorityComboBox = new ComboBox<>();
-        priorityComboBox.getItems().addAll(TicketPriority.values());
-        priorityComboBox.setValue(TicketPriority.REGULAR);
-
-        Label statusLabel = new Label("Status");
-        ComboBox<TicketStatus> statusComboBox = new ComboBox<>();
-        statusComboBox.getItems().addAll(TicketStatus.values());
-        statusComboBox.setValue(TicketStatus.OPEN);
-
-        // Event-handler to manage the priority and status of the selected tickets.
-        Button updateTicketButton = new Button("Update Ticket");
-        updateTicketButton.setOnAction(event -> {
-            Ticket selectedTicket = ticketTableView.getSelectedTicket();
-
-            if (selectedTicket == null) {
-                messageLabel.setText("Please select a ticket");
-                return;
-            }
-
-            TicketPriority selectedPriority = priorityComboBox.getValue();
-            TicketStatus selectedStatus = statusComboBox.getValue();
-
-            supportDeskService.updateTicketPriority(selectedTicket.getTicketId(), selectedPriority);
-            supportDeskService.updateTicketStatus(selectedTicket.getTicketId(), selectedStatus);
-            
-            ticketTableView.refresh();
-
-            messageLabel.setText("Ticket #" + selectedTicket.getTicketId() + " has been successfully updated");
-        });
+        TicketUpdateView ticketUpdateView = new TicketUpdateView();
 
 
+
+        // === UI ELEMENTS ===
+        Label titleLabel = new Label("EvAna Help Desk");
+        Label messageLabel = new Label();
+        Label ticketTableLabel = new Label("Tickets");
+
+
+        // ============================================================================
+        // CREATE TICKET
+        // ============================================================================
         
-        // === CREATE TICKET BUTTON ===
         createTicketView.getCreateTicketButton().setOnAction(event -> {
 
             String name = createTicketView.getRequesterName();
@@ -87,75 +60,94 @@ public class EvAnaApp extends Application {
                 messageLabel.setText("Please enter your name.");
                 return;
             }
-
             if (description.isBlank()) {
                 messageLabel.setText("Please enter a problem description.");
                 return;
             }
-            
+
             Ticket ticket = supportDeskService.createTicket(name, description);
-            messageLabel.setText("Ticket # " + ticket.getTicketId() + " created successfully.");
+            messageLabel.setText("Ticket #" + ticket.getTicketId() + " created successfully.");
             ticketTableView.displayTickets(supportDeskService.getAllTickets());
-            
-            createTicketView.clearFields();
+
+            createTicketView.clearFields(); // After creating a ticket, the form is cleared.
+
         });
 
 
+        // ============================================================================
+        // SEARCH TICKET
+        // ============================================================================
 
-        // == SEARCH FEATURE ==
-        Label searchLabel = new Label("Search Tickets by ID");
-        TextField searchField = new TextField();
-        searchField.setPromptText("Enter Ticket ID");
+        ticketSearchView.getSearchButton().setOnAction(event -> {
+            String input = ticketSearchView.getSearchInput();
 
-        Button searchButton = new Button("Search");
-
-        searchButton.setOnAction(event -> {
-            String input = searchField.getText().trim();
-
-            if(input.isBlank()) {
+            if (input.isBlank()) {
                 messageLabel.setText("Please enter a ticket ID.");
                 return;
             }
 
+            // Try to parse the input as an integer. If successful, retrieve the ticket with the given ID.
             try {
+
                 int ticketId = Integer.parseInt(input);
                 Ticket ticket = supportDeskService.getTicketsByTicketId(ticketId);
 
                 if (ticket == null) {
-                    messageLabel.setText("Ticket #" + ticketId + " was not found.");
+                    messageLabel.setText("Ticket #" + ticketId + " not found.");
                     return;
                 }
 
+                // Select the found ticket in the table view.
                 ticketTableView.selectTicket(ticket);
                 messageLabel.setText("Ticket #" + ticketId + " was found.");
             }
             catch (NumberFormatException exception) {
-                messageLabel.setText("Please enter a valid ticked ID.");
+                messageLabel.setText("Please enter a valid ticket ID.");
             }
         });
 
 
 
-        // === HORIZONTAL LAYOUT ===
-        HBox searchBar = new HBox(
-            10,
-            searchLabel,
-            searchField,
-            searchButton
-        );
-        // Makes the search bar fill the available space.
-        HBox.setHgrow(searchField, Priority.ALWAYS);
-        searchField.setMaxWidth(Double.MAX_VALUE);
+        // ============================================================================
+        // UPDATE TICKET
+        // ============================================================================
+        
+        ticketUpdateView.getUpdateTicketButton().setOnAction(event -> {
+            Ticket selectedTicket = ticketTableView.getSelectedTicket();
 
-        HBox updateBar = new HBox(
-            10,
-            priorityLabel,
-            priorityComboBox,
-            statusLabel,
-            statusComboBox,
-            updateTicketButton
-        );
+            if (selectedTicket == null) {
+                messageLabel.setText("Please select a ticket");
+                return;
+            }
 
+            // Update the selected ticket's priority and status.
+            TicketPriority selectedPriority = ticketUpdateView.getSelectedPriority();
+            TicketStatus selectedStatus = ticketUpdateView.getSelectedStatus();
+
+            // Update the ticket in the repository.
+            supportDeskService.updateTicketPriority(selectedTicket.getTicketId(), selectedPriority);
+            supportDeskService.updateTicketStatus(selectedTicket.getTicketId(), selectedStatus);
+            
+            ticketTableView.refresh();
+
+            messageLabel.setText("Ticket #" + selectedTicket.getTicketId() + " has been successfully updated");
+        });
+
+
+        // ============================================================================
+        // TABLE SELECTION
+        // ============================================================================
+        
+        ticketTableView.getTable()
+            .getSelectionModel()
+            .selectedItemProperty()
+            .addListener((observable, oldTicket, newTicket) -> {
+                if (newTicket != null) {
+                    ticketUpdateView.showTicketValues(newTicket);
+                }
+            });
+
+        // === HORIZONTAL LAYOUT ===  
         HBox header = new HBox(titleLabel);
         header.setPadding(new Insets(15));
         
@@ -165,19 +157,16 @@ public class EvAnaApp extends Application {
             10,
             createTicketView.getRoot(),
             messageLabel,
-            searchBar,
+            ticketSearchView.getRoot(),
             ticketTableLabel,
             ticketTableView.getTable(),
-            updateBar
+            ticketUpdateView.getRoot()
         );
+        mainContent.setPadding(new Insets(20));
 
         // Makes the ticket table fill the available space.
         VBox.setVgrow(ticketTableView.getTable(), Priority.ALWAYS);
-
         
-        
-        // === SET PADDING AND SCENE ===
-        mainContent.setPadding(new Insets(20));
 
         // === BORDER LAYOUT ===
         BorderPane root = new BorderPane();
@@ -185,7 +174,7 @@ public class EvAnaApp extends Application {
         root.setCenter(mainContent);
 
         // === SCENE ===
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = new Scene(root, 1000, 650);
         stage.setScene(scene);
         stage.setTitle("EvAna Help Desk");
         stage.show();
