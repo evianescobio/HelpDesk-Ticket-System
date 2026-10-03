@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.control.Button;
 
 import ui.components.*;
 
@@ -13,74 +14,78 @@ public class MainView {
     
     private final BorderPane root;
 
-    private final CreateTicketView createTicketView;
-    private final TicketSearchView ticketSearchView;
-    private final TicketTableView ticketTableView;
-    private final TicketUpdateView ticketUpdateView;
+    private final ClientView clientView;
+    private final TechnicianView technicianView;
+
+    private final Button clientButton;
+    private final Button technicianButton;
 
     private final Label messageLabel;
 
     public MainView() {
-        createTicketView = new CreateTicketView();
-        ticketSearchView = new TicketSearchView();
-        ticketTableView = new TicketTableView();
-        ticketUpdateView = new TicketUpdateView();
+
+        // For now, the program will have this design: Technician View and Client View.
+        clientView = new ClientView();
+        technicianView = new TechnicianView();
 
         messageLabel = new Label();
+
+        // BUTTON ACCESS //
+        clientButton = new Button("Client");
+        technicianButton = new Button("Technician");
 
         // TITLE SECTION //
         Label titleLabel = new Label("Evana Service Desk");
 
-        HBox header = new HBox(titleLabel);
+        // NAVIGATION SECTION //
+        HBox navigation = new HBox(10, clientButton, technicianButton);
+
+        // HEADER SECTION //
+        HBox header = new HBox(20, titleLabel, navigation);
         header.setPadding(new Insets(15));
 
-        // TABLE SECTION //
-        Label ticketTableLabel = new Label("Tickets");
-
-
-        // MAIN CONTENT SECTION //
-        VBox mainContent = new VBox(
-            10,
-            createTicketView.getRoot(),
-            messageLabel,
-            ticketSearchView.getRoot(),
-            ticketTableLabel,
-            ticketTableView.getTable(),
-            ticketUpdateView.getRoot()
-        );
-        mainContent.setPadding(new Insets(20));
-
-        VBox.setVgrow(ticketTableView.getTable(), Priority.ALWAYS);
 
         // BORDER LAYOUT //
         root = new BorderPane();
         root.setTop(header);
-        root.setCenter(mainContent);
+        root.setCenter(clientView.getRoot());
+        root.setBottom(messageLabel);
+
+        // Main View Layout //
+        BorderPane.setMargin(messageLabel, new Insets(10, 20, 10, 20));
 
     }
 
 
-    // === GETTERS ===
-    // Getters for the root element.
+    // METHODS TO DISPLAY BTH ACCESS VIEWS //
+    public void showClientView() {
+        root.setCenter(clientView.getRoot());
+    }
+
+    public void showTechnicianView() {
+        root.setCenter(technicianView.getRoot());
+    }
+
+
+    // MAIN VIEW GETTERS //
+    public ClientView getClientView() {
+        return clientView;
+    }
+
+    public TechnicianView getTechnicianView() {
+        return technicianView;
+    }
+
+    public Button getClientButton() {
+        return clientButton;
+    }
+
+    public Button getTechnicianButton() {
+        return technicianButton;
+    }
+
     public BorderPane getRoot() {
         return root;
-    }
-
-    // Getters for the components.
-    public CreateTicketView getCreateTicketView() {
-        return createTicketView;
-    }
-
-    public TicketSearchView getTicketSearchView() {
-        return ticketSearchView;
-    }
-    
-    public TicketTableView getTicketTableView() {
-        return ticketTableView;
-    }
-
-    public TicketUpdateView getTicketUpdateView() {
-        return ticketUpdateView;
     }
 
     // Method to set the message label.

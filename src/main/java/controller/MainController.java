@@ -1,16 +1,12 @@
+
 package controller;
 
-
-import javafx.scene.Scene;
 import model.Ticket;
 import model.TicketPriority;
 import model.TicketStatus;
 import service.SupportDeskService;
-import ui.MainView;
-import ui.components.CreateTicketView;
-import ui.components.TicketSearchView;
-import ui.components.TicketTableView;
-import ui.components.TicketUpdateView;
+import ui.*;
+import ui.components.*;
 
 
 public class MainController {
@@ -22,6 +18,7 @@ public class MainController {
         this.mainView = mainView;
         this.supportDeskService = supportDeskService;
 
+        configureNavigationHandler();
         configureCreateTicketView();
         configureTicketSearchView();
         configureTicketUpdateView();
@@ -29,12 +26,25 @@ public class MainController {
     }
 
 
+
+    // === CONFIGURE NAVIGATION METHODS ===
+    private void configureNavigationHandler() {
+        mainView.getClientButton().setOnAction(event -> mainView.showClientView());
+        mainView.getTechnicianButton().setOnAction(event -> {
+            TicketTableView ticketTableView = mainView.getTechnicianView().getTicketTableView();
+            ticketTableView.displayTickets(supportDeskService.getAllTickets());
+
+            mainView.showTechnicianView();
+        });
+    }
+
+
     // === CONFIGURE CREATE TICKET VIEW ===
     private void configureCreateTicketView() {
-        mainView.getCreateTicketView().getCreateTicketButton().setOnAction(event -> {
+        mainView.getClientView().getCreateTicketView().getCreateTicketButton().setOnAction(event -> {
 
-            String name = mainView.getCreateTicketView().getRequesterName();
-            String description = mainView.getCreateTicketView().getDescription();
+            String name = mainView.getClientView().getCreateTicketView().getRequesterName();
+            String description = mainView.getClientView().getCreateTicketView().getDescription();
 
             if (name.isBlank()) {
                 mainView.setMessage("Please enter your name.");
@@ -47,9 +57,9 @@ public class MainController {
 
             Ticket ticket = supportDeskService.createTicket(name, description);
             mainView.setMessage("Ticket #" + ticket.getTicketId() + " created successfully.");
-            mainView.getTicketTableView().displayTickets(supportDeskService.getAllTickets());
+            mainView.getTechnicianView().getTicketTableView().displayTickets(supportDeskService.getAllTickets());
 
-            mainView.getCreateTicketView().clearFields(); // After creating a ticket, the form is cleared.
+            mainView.getClientView().getCreateTicketView().clearFields(); // After creating a ticket, the form is cleared.
         });
     }
 
@@ -57,8 +67,8 @@ public class MainController {
 
     // === CONFIGURE TICKET SEARCH VIEW ===
     private void configureTicketSearchView() {
-         mainView.getTicketSearchView().getSearchButton().setOnAction(event -> {
-            String input = mainView.getTicketSearchView().getSearchInput();
+        mainView.getTechnicianView().getTicketSearchView().getSearchButton().setOnAction(event -> {
+            String input = mainView.getTechnicianView().getTicketSearchView().getSearchInput();
 
             if (input.isBlank()) {
                 mainView.setMessage("Please enter a ticket ID.");
@@ -77,7 +87,7 @@ public class MainController {
                 }
 
                 // Select the found ticket in the table view.
-                mainView.getTicketTableView().selectTicket(ticket);
+                mainView.getTechnicianView().getTicketTableView().selectTicket(ticket);
                 mainView.setMessage("Ticket #" + ticketId + " was found.");
             }
             catch (NumberFormatException exception) {
@@ -90,8 +100,8 @@ public class MainController {
 
     // === CONFIGURE TICKET UPDATE VIEW ===
     private void configureTicketUpdateView() {
-        mainView.getTicketUpdateView().getUpdateTicketButton().setOnAction(event -> {
-            Ticket selectedTicket = mainView.getTicketTableView().getSelectedTicket();
+        mainView.getTechnicianView().getTicketUpdateView().getUpdateTicketButton().setOnAction(event -> {
+            Ticket selectedTicket = mainView.getTechnicianView().getTicketTableView().getSelectedTicket();
 
             if (selectedTicket == null) {
                 mainView.setMessage("Please select a ticket");
@@ -99,14 +109,14 @@ public class MainController {
             }
 
             // Update the selected ticket's priority and status.
-            TicketPriority selectedPriority = mainView.getTicketUpdateView().getSelectedPriority();
-            TicketStatus selectedStatus = mainView.getTicketUpdateView().getSelectedStatus();
+            TicketPriority selectedPriority = mainView.getTechnicianView().getTicketUpdateView().getSelectedPriority();
+            TicketStatus selectedStatus = mainView.getTechnicianView().getTicketUpdateView().getSelectedStatus();
 
             // Update the ticket in the repository.
             supportDeskService.updateTicketPriority(selectedTicket.getTicketId(), selectedPriority);
             supportDeskService.updateTicketStatus(selectedTicket.getTicketId(), selectedStatus);
             
-            mainView.getTicketTableView().refresh();
+            mainView.getTechnicianView().getTicketTableView().refresh();
 
             mainView.setMessage("Ticket #" + selectedTicket.getTicketId() + " has been successfully updated");
         });
@@ -116,12 +126,12 @@ public class MainController {
 
     // === CONFIGURE TICKET TABLE VIEW ===
     private void configureTicketTableView() {
-         mainView.getTicketTableView().getTable()
+         mainView.getTechnicianView().getTicketTableView().getTable()
             .getSelectionModel()
             .selectedItemProperty()
             .addListener((observable, oldTicket, newTicket) -> {
                 if (newTicket != null) {
-                    mainView.getTicketUpdateView().showTicketValues(newTicket);
+                    mainView.getTechnicianView().getTicketUpdateView().showTicketValues(newTicket);
                 }
             });
     }
