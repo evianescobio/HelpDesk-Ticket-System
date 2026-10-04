@@ -16,6 +16,8 @@ public class TicketUpdateView {
     private final ComboBox<TicketPriority> priorityComboBox;
     private final ComboBox<TicketStatus> statusComboBox;
     private final Button updateTicketButton;
+    private final Button resolveTicketButton;
+
 
     public TicketUpdateView() {
 
@@ -32,6 +34,7 @@ public class TicketUpdateView {
         statusComboBox.setValue(TicketStatus.OPEN);
 
         updateTicketButton = new Button("Update Ticket");
+        resolveTicketButton = new Button("Resolve Ticket");
 
         root = new HBox(
             10,
@@ -39,7 +42,8 @@ public class TicketUpdateView {
             priorityComboBox,
             statusLabel,
             statusComboBox,
-            updateTicketButton
+            updateTicketButton,
+            resolveTicketButton
         );
     }
 
@@ -49,6 +53,10 @@ public class TicketUpdateView {
 
     public Button getUpdateTicketButton() {
         return updateTicketButton;
+    }
+
+    public Button getResolveTicketButton() {
+        return resolveTicketButton;
     }
 
     public TicketPriority getSelectedPriority() {

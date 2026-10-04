@@ -1,6 +1,11 @@
 
 package controller;
 
+import java.util.Optional;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+
 import model.Ticket;
 import model.TicketPriority;
 import model.TicketStatus;
@@ -19,10 +24,13 @@ public class MainController {
         this.supportDeskService = supportDeskService;
 
         configureNavigationHandler();
-        configureCreateTicketView();
+        configureCreateTicketViewForClient();
+        configureCreateTicketViewForTechnician();
         configureTicketSearchView();
         configureTicketUpdateView();
         configureTicketTableView();
+        configureUpdateButtonState();
+        configureResolveTicketHandler();
     }
 
 
@@ -39,8 +47,8 @@ public class MainController {
     }
 
 
-    // === CONFIGURE CREATE TICKET VIEW ===
-    private void configureCreateTicketView() {
+    // === CONFIGURE CREATE TICKET VIEW FOR CLIENT ===
+    private void configureCreateTicketViewForClient() {
         mainView.getClientView().getCreateTicketView().getCreateTicketButton().setOnAction(event -> {
 
             String name = mainView.getClientView().getCreateTicketView().getRequesterName();
@@ -97,6 +105,46 @@ public class MainController {
     }
 
 
+    
+    // === CONFIGURE TICKET TABLE VIEW ===
+    private void configureTicketTableView() {
+         mainView.getTechnicianView().getTicketTableView().getTable()
+            .getSelectionModel()
+            .selectedItemProperty()
+            .addListener((observable, oldTicket, newTicket) -> {
+                if (newTicket != null) {
+                    mainView.getTechnicianView().getTicketUpdateView().showTicketValues(newTicket);
+                }
+            });
+    }
+
+
+
+    // === CONFIGURE CREATE TICKET VIEW FOR TECHNICIAN ===
+    private void configureCreateTicketViewForTechnician() {
+        mainView.getTechnicianView().getCreateTicketView().getCreateTicketButton().setOnAction(event -> {
+
+            String name = mainView.getTechnicianView().getCreateTicketView().getRequesterName();
+            String description = mainView.getTechnicianView().getCreateTicketView().getDescription();
+
+            if (name.isBlank()) {
+                mainView.setMessage("Please enter your name.");
+                return;
+            }
+            if (description.isBlank()) {
+                mainView.setMessage("Please enter a problem description.");
+                return;
+            }
+
+            Ticket ticket = supportDeskService.createTicket(name, description);
+            mainView.setMessage("Ticket #" + ticket.getTicketId() + " created successfully.");
+            mainView.getTechnicianView().getTicketTableView().displayTickets(supportDeskService.getAllTickets());
+
+            mainView.getTechnicianView().getCreateTicketView().clearFields(); // After creating a ticket, the form is cleared.
+        });
+    }
+
+
 
     // === CONFIGURE TICKET UPDATE VIEW ===
     private void configureTicketUpdateView() {
@@ -123,18 +171,54 @@ public class MainController {
     }
 
 
+    // === CONFIGURE UPDATE BUTTON STATE ===
+    private void configureUpdateButtonState() {
+        // Get the Ticket Table View and the Update View.
+        TicketTableView tableView = mainView.getTechnicianView().getTicketTableView();
+        TicketUpdateView updateView = mainView.getTechnicianView().getTicketUpdateView();
 
-    // === CONFIGURE TICKET TABLE VIEW ===
-    private void configureTicketTableView() {
-         mainView.getTechnicianView().getTicketTableView().getTable()
-            .getSelectionModel()
-            .selectedItemProperty()
-            .addListener((observable, oldTicket, newTicket) -> {
-                if (newTicket != null) {
-                    mainView.getTechnicianView().getTicketUpdateView().showTicketValues(newTicket);
-                }
-            });
+        // Disable the Update Button if no ticket is selected.
+        updateView.getUpdateTicketButton().disableProperty().bind(tableView.getTable().getSelectionModel().selectedItemProperty().isNull());
     }
+
+
+    // === CONFIGURE RESOLVE TICKET BUTTON ===
+    private void configureResolveTicketHandler() {
+        TicketTableView tableView = mainView.getTechnicianView().getTicketTableView();
+        TicketUpdateView updateView = mainView.getTechnicianView().getTicketUpdateView();
+
+        updateView.getResolveTicketButton().setOnAction(event -> {
+            
+            Ticket selectedTicket = tableView.getSelectedTicket();
+
+            if (selectedTicket == null) {
+                mainView.setMessage("Please select a ticket");
+                return;
+            }
+
+            // Resolve the selected ticket.
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Resolve Ticket");
+
+            confirmation.setHeaderText("Resolve Ticket # " + selectedTicket.getTicketId() + "?");
+            confirmation.setContentText("Are you sure you want to resolve this ticket?");
+
+            ButtonType resolveButtonType = new ButtonType("Resolve");
+            confirmation.getButtonTypes().setAll(resolveButtonType, ButtonType.CANCEL);
+
+            Optional<ButtonType> result = confirmation.showAndWait();
+            if (result.isPresent() && result.get() == resolveButtonType) {
+                supportDeskService.resolveTicket(selectedTicket.getTicketId());
+                tableView.refresh();
+                updateView.showTicketValues(selectedTicket);
+                mainView.setMessage("Ticket #" + selectedTicket.getTicketId() + " has been resolved");
+
+
+            }
+
+        });
+    }
+
 
 
     

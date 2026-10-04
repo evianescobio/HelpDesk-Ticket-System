@@ -57,7 +57,7 @@ public class MainView {
     }
 
 
-    // METHODS TO DISPLAY BTH ACCESS VIEWS //
+    // METHODS TO DISPLAY BOTH ACCESS VIEWS //
     public void showClientView() {
         root.setCenter(clientView.getRoot());
     }
